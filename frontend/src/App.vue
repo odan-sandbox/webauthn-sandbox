@@ -7,12 +7,36 @@
 
 <script lang="ts">
 import Vue from "vue";
+import base64url from "base64url";
+import { merge } from "lodash";
 import HelloWorld from "./components/HelloWorld.vue";
 
 export default Vue.extend({
   name: "app",
   components: {
     HelloWorld
+  },
+  async mounted() {
+    const rawRes = await fetch(`/webauthn/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: "odan",
+        username: "odan"
+      })
+    });
+    const res = await rawRes.json();
+    const publicKey = merge(res, {
+      challenge: base64url.toBuffer(res.challenge),
+      user: {
+        id: base64url.toBuffer(res.user.id)
+      }
+    });
+    console.log("publicKey", publicKey);
+    const credential = await navigator.credentials!.create({ publicKey });
+    console.log("credential", credential);
   }
 });
 </script>
