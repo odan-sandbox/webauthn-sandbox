@@ -1,0 +1,5 @@
+{
+  "name": "webauthn-sandbox",
+  "private": true,
+  "workspaces": ["frontend"]
+}
